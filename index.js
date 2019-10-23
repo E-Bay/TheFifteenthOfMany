@@ -5,10 +5,6 @@ penguinPromise.then(function(classData)
 {
     console.log(classData)
     makeTable(classData)
-    getQuiz(classData)
-    getHomework(classData)
-    getTest(classData)
-    getFinal(classData)
 },
 function(err)
 {
@@ -16,28 +12,49 @@ function(err)
 })
 var makeTable = function(penguin)
 {
-    return d3.select("tbody")
+    var row = d3.select("tbody").append("tr")
       .selectAll("tr")
       .data(penguin)
       .enter()
       .append("tr")
-      .append("td")
-      .append("img")
+      row.append("img")
       .attr("src", function(d){return d.picture})
+      row.append("td")
+      .text(function(d)
+      {
+          return getQuiz(d.quizes)
+      })
+      row.append("td")
+      .text(function(d)
+      {
+          return getHomework(d.homework)
+      })
+      row.append("td")
+      .text(function(d)
+      {
+          return getTest(d.test)
+      })
+      row.append("td")
+      .text(function(d)
+      {
+          return getFinal(d)
+      })
 }
 var getQuiz = function(penguin)
 {
-    
+    return d3.mean(penguin.map(getGrade))
 }
 var getHomework = function(penguin)
 {
-    
+    return d3.mean(penguin.map(getGrade))
 }
 var getTest = function(penguin)
 {
-    
+    return d3.mean(penguin.map(getGrade))
 }
 var getFinal = function(penguin)
 {
-    
+    var FinalGrade = penguin.final[0].grade
+    var Grade = FinalGrade*0.35 + getHomework(penguin)*0.15 + getQuiz(penguin)*0.2 + getTest(penguin)*0.3
+    return Grade
 }
